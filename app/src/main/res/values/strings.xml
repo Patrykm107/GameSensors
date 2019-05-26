@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MyGameJava</string>
+    <string name="title_activity_rotation_vector_demo">RotationVectorDemoActivity</string>
+</resources>
