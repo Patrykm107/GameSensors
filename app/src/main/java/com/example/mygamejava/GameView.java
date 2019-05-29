@@ -1,18 +1,30 @@
 package com.example.mygamejava;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
+
+import com.example.mygamejava.GameElements.Background;
+import com.example.mygamejava.GameElements.Character;
+import com.example.mygamejava.GameElements.Enemy;
+import com.example.mygamejava.GameElements.Food;
+import com.example.mygamejava.GameElements.Score;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
-    private int wallWidth = 50;
-    private Ball ball;
+    private Character character;
     private Background background;
     private Score score;
     private Food food;
+    private Enemy enemy;
+
+    private final String HISCORE_SHARED_PREF = "HISCORE_pref_keY";
+    private final String HISCORE_KEY = "hiSCORE";
 
     public GameView(Context context){
         super(context);
@@ -23,12 +35,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        background = new Background(wallWidth);
-        ball = new Ball(wallWidth);
-        score = new Score(wallWidth);
-        food = new Food(wallWidth);
+        Context context= getContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(HISCORE_SHARED_PREF,Context.MODE_PRIVATE);
+        int hiscore = sharedPreferences.getInt(HISCORE_KEY, 0);
+        thread = new MainThread(getHolder(), this);
+        background = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.background));
+        character = new Character(BitmapFactory.decodeResource(getResources(),R.drawable.head),
+                BitmapFactory.decodeResource(getResources(),R.drawable.mario));
+        score = new Score(hiscore);
+        food = new Food(BitmapFactory.decodeResource(getResources(),R.drawable.access),
+                BitmapFactory.decodeResource(getResources(),R.drawable.coin));
+        enemy = new Enemy(BitmapFactory.decodeResource(getResources(),R.drawable.enemy),
+                BitmapFactory.decodeResource(getResources(),R.drawable.bowser));
 
-        thread.setRunning(true);
         thread.start();
     }
 
@@ -39,6 +58,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         boolean retry = true;
+        Context context = getContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(HISCORE_SHARED_PREF,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(HISCORE_KEY, score.hiscore);
+        editor.apply();
         while(retry) {
             try {
                 thread.setRunning(false);
@@ -50,30 +74,49 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void changeBallVelocity(float xVel, float yVel){
-        ball.setVelocities(xVel, yVel);
+    public void changeCharacterVelocity(int xVel, int yVel){
+        character.setVelocities(xVel, yVel);
     }
 
     public void update(){
-        PlayStatus result = ball.update(food);
-        switch (result){
-            case SCORE: {
-                score.increasePoints();
+        enemy.update();
+        if(character.update() && !character.isOverlapping(enemy)){
+            if(character.isOverlapping(food)) {
+                if (score.increasePoints()) {
+                    character.increaseAcceleration();
+                    enemy.makeStronger();
+                }
                 food.randomize();
-                break;
+                while (food.isOverlapping(character)) food.randomize();
             }
-            case LOSE : {
-                score.erasePoints(); break; }
+        }else{
+            resetGame();
         }
     }
 
+    public void resetGame(){
+        score.erasePoints();
+        character.reset();
+        food.randomize();
+        enemy.reset();
+    }
+
     public void pauseGame(){
-        try {
-            ball.setVelocities(0,0);
-            Thread.sleep(1000);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        thread.setRunning(false);
+    }
+
+    public void resumeGame(){
+        thread = new MainThread(getHolder(),this);
+        thread.start();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        character.changeSprite();
+        enemy.changeSprite();
+        food.changeSprite();
+
+        return super.onTouchEvent(event);
     }
 
     @Override
@@ -81,9 +124,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         if(canvas!=null){
             background.draw(canvas);
-            ball.draw(canvas);
-            score.draw(canvas);
+            character.draw(canvas);
             food.draw(canvas);
+            enemy.draw(canvas);
+            score.draw(canvas);
         }
     }
 }
