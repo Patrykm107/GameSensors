@@ -9,7 +9,7 @@ public class MainThread extends Thread {
     private boolean running;
     private static Canvas canvas;
 
-    public MainThread(SurfaceHolder surfaceHolder, GameView gameView){
+    public MainThread(SurfaceHolder surfaceHolder, GameView gameView) {
         super();
         this.surfaceHolder = surfaceHolder;
         this.gameView = gameView;
@@ -40,5 +40,7 @@ public class MainThread extends Thread {
         }
     }
 
-    public void setRunning(boolean isRunning) {running=isRunning;}
+    public void setRunning(boolean isRunning) {
+        running = isRunning;
+    }
 }

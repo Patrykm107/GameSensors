@@ -6,14 +6,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 public class Score {
-    private Paint scorePaint = new Paint(), hiscorePaint=new Paint();
+    private Paint scorePaint = new Paint(), hiscorePaint = new Paint();
     private int score = 0;
     public int hiscore;
     private int textSize = 64;
     private final static int TRIGGER = 7;
 
-    public Score(int hiscore){
-        this.hiscore=hiscore;
+    public Score(int hiscore) {
+        this.hiscore = hiscore;
         scorePaint.setColor(Color.WHITE);
         scorePaint.setTextSize(textSize);
         scorePaint.setTextAlign(Paint.Align.LEFT);
@@ -22,20 +22,20 @@ public class Score {
         hiscorePaint.setTextAlign(Paint.Align.RIGHT);
     }
 
-    public boolean increasePoints(){
+    public boolean increasePoints() {
         score++;
-        if (score% TRIGGER ==0) return  true;
+        if (score % TRIGGER == 0) return true;
         return false;
     }
 
-    public void erasePoints(){
-        if(score>hiscore) hiscore = score;
-        score=0;
+    public void erasePoints() {
+        if (score > hiscore) hiscore = score;
+        score = 0;
     }
 
-    public void draw(Canvas canvas){
+    public void draw(Canvas canvas) {
         canvas.drawText(Integer.toString(score), 0, textSize, scorePaint);
         int x = Resources.getSystem().getDisplayMetrics().widthPixels;
-        canvas.drawText("HiScore: "+Integer.toString(hiscore), x, textSize, hiscorePaint);
+        canvas.drawText("HiScore: " + Integer.toString(hiscore), x, textSize, hiscorePaint);
     }
 }

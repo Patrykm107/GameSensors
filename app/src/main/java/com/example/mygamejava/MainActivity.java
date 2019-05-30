@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        gameView= new GameView(this);
+        gameView = new GameView(this);
         setContentView(gameView);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -56,11 +56,12 @@ public class MainActivity extends Activity {
         super.onResume();
     }
 
-    public SensorEventListener getGyroListener(final GameView gameView){
+    public SensorEventListener getGyroListener(final GameView gameView) {
         return new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                if (sensorEvent != null) gameView.changeCharacterVelocity((int)-sensorEvent.values[0],(int) sensorEvent.values[1]);
+                if (sensorEvent != null)
+                    gameView.changeCharacterVelocity((int) -sensorEvent.values[0], (int) sensorEvent.values[1]);
 
             }
 
@@ -71,17 +72,16 @@ public class MainActivity extends Activity {
     }
 
     public SensorEventListener getProximitySensorListener(final GameView gameView, final Sensor proximitySensor) {
-          return new SensorEventListener() {
+        return new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                if(sensorEvent.values[0] < proximitySensor.getMaximumRange()) {
-                    if(isRunning){
+                if (sensorEvent.values[0] < proximitySensor.getMaximumRange()) {
+                    if (isRunning) {
                         gameView.pauseGame();
-                        isRunning=false;
-                    }
-                    else {
+                        isRunning = false;
+                    } else {
                         gameView.resumeGame();
-                        isRunning=true;
+                        isRunning = true;
                     }
                 }
             }
