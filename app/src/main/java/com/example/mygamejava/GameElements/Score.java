@@ -10,7 +10,7 @@ public class Score {
     private int score = 0;
     public int hiscore;
     private int textSize = 64;
-    private int trigger = 7;
+    private final static int TRIGGER = 7;
 
     public Score(int hiscore){
         this.hiscore=hiscore;
@@ -24,7 +24,7 @@ public class Score {
 
     public boolean increasePoints(){
         score++;
-        if (score%trigger==0) return  true;
+        if (score% TRIGGER ==0) return  true;
         return false;
     }
 

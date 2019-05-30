@@ -14,8 +14,8 @@ public class Food extends HitboxElement{
 
     private Random random = new Random();
     private Paint paint = new Paint();
-    private final int COLORS[] = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.MAGENTA};
-    final private int HEIGHT = 70, WIDTH = 70;
+    private final static int COLORS[] = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.MAGENTA};
+    private final static int HEIGHT = 70, WIDTH = 70;
 
     public Food(Bitmap bitmap, Bitmap bitmap2){
         sprite = bitmap;

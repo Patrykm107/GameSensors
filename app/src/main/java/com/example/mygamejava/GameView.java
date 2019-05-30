@@ -23,22 +23,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Food food;
     private Enemy enemy;
 
-    private final String HISCORE_SHARED_PREF = "HISCORE_pref_keY";
-    private final String HISCORE_KEY = "hiSCORE";
+    private static final String HISCORE_SHARED_PREF = "HISCORE_pref_keY";
+    private static final String HISCORE_KEY = "hiSCORE";
 
     public GameView(Context context){
         super(context);
         getHolder().addCallback(this);
-        thread = new MainThread(getHolder(), this);
-        setFocusable(true);
-    }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        Context context= getContext();
+        setFocusable(true);
+
         SharedPreferences sharedPreferences = context.getSharedPreferences(HISCORE_SHARED_PREF,Context.MODE_PRIVATE);
         int hiscore = sharedPreferences.getInt(HISCORE_KEY, 0);
-        thread = new MainThread(getHolder(), this);
         background = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.background));
         character = new Character(BitmapFactory.decodeResource(getResources(),R.drawable.head),
                 BitmapFactory.decodeResource(getResources(),R.drawable.mario));
@@ -47,6 +42,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 BitmapFactory.decodeResource(getResources(),R.drawable.coin));
         enemy = new Enemy(BitmapFactory.decodeResource(getResources(),R.drawable.enemy),
                 BitmapFactory.decodeResource(getResources(),R.drawable.bowser));
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        thread = new MainThread(getHolder(), this);
 
         thread.start();
     }
@@ -58,11 +58,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         boolean retry = true;
-        Context context = getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(HISCORE_SHARED_PREF,Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(HISCORE_KEY, score.hiscore);
-        editor.apply();
         while(retry) {
             try {
                 thread.setRunning(false);
@@ -129,5 +124,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             enemy.draw(canvas);
             score.draw(canvas);
         }
+    }
+
+    public void saveHiScore(){
+        Context context = getContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(HISCORE_SHARED_PREF,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(HISCORE_KEY, score.hiscore);
+        editor.apply();
     }
 }

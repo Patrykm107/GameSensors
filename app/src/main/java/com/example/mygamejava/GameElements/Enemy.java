@@ -8,10 +8,10 @@ public class Enemy extends HitboxElement {
 
     private int xVelocity = 1, yVelocity = 1;
     private int acceleration = 0, accelerationAmp = 2;
-    final private int height=150, width=150;
-    final private Rect DEFAULT_HITBOX = new Rect(0,0,width,height);
-    final private int DEFAULT_ACCELERATION = 0;
-    final private int GROW_SIZE = 10;
+    private static final int height=150, width=150;
+    private static final Rect DEFAULT_HITBOX = new Rect(0,0,width,height);
+    private static final int DEFAULT_ACCELERATION = 0;
+    private static final int GROW_SIZE = 10;
 
     public Enemy(Bitmap bitmap, Bitmap bitmap2){
         sprite=bitmap;

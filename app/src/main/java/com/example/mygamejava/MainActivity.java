@@ -15,7 +15,7 @@ public class MainActivity extends Activity {
     private Sensor gyroSensor, proximitySensor;
     private SensorEventListener gyroListener, proximityListener;
     private GameView gameView;
-    private final int CHECKING_FREQ = 2 * 1000 * 1000; //every 2 seconds
+    private final static int CHECKING_FREQ = 2 * 1000 * 1000; //every 2 seconds
     private boolean isRunning = true;
 
     @Override
@@ -25,7 +25,6 @@ public class MainActivity extends Activity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         gameView= new GameView(this);
         setContentView(gameView);
-        //setContentView(R.layout.activity_main);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -38,10 +37,16 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onPause() {  // to do instance save well
+    protected void onPause() {
         sensorManager.unregisterListener(gyroListener);
         sensorManager.unregisterListener(proximityListener);
         super.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        gameView.saveHiScore();
+        super.onSaveInstanceState(outState);
     }
 
     @Override
